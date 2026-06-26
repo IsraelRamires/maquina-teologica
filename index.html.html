@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0e0e0e;
+    color: #e8e2d9;
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #f5f0e8;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.75rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 28px;
+  }
+
+  .step-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .step-dot.active { background: #c9a84c; }
+  .step-dot.done { background: #4a6741; }
+
+  .card {
+    background: #161616;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #c9a84c;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: #f5f0e8;
+    margin-bottom: 10px;
+  }
+
+  .card p {
+    font-size: 0.85rem;
+    color: #999;
+    line-height: 1.6;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #1e1e1e;
+  }
+
+  .flow-step:last-child { border-bottom: none; }
+
+  .flow-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1e1e1e;
+    border: 1px solid #c9a84c44;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    color: #c9a84c;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .flow-content strong {
+    display: block;
+    font-size: 0.9rem;
+    color: #e8e2d9;
+    margin-bottom: 3px;
+  }
+
+  .flow-content span {
+    font-size: 0.8rem;
+    color: #666;
+    line-height: 1.5;
+  }
+
+  .prompt-box {
+    background: #0a0a0a;
+    border: 1px solid #2a2a2a;
+    border-left: 3px solid #c9a84c;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 0.82rem;
+    color: #b0a898;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+  }
+
+  .copy-btn {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    background: #c9a84c;
+    color: #0e0e0e;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: background 0.2s;
+  }
+
+  .copy-btn:active { background: #b8963e; }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .tag {
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 0.75rem;
+    color: #888;
+  }
+
+  .section-title {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: #444;
+    margin: 24px 0 12px;
+    font-weight: 600;
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .nav-btn.primary {
+    background: #c9a84c;
+    color: #0e0e0e;
+    width: 100%;
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .nav-btn.secondary {
+    background: #1e1e1e;
+    color: #888;
+    border: 1px solid #2a2a2a;
+  }
+
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .alert {
+    background: #1a1a12;
+    border: 1px solid #c9a84c33;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 0.82rem;
+    color: #9a8a6a;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .copied-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4a6741;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  .copied-toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<h1>Máquina de Conteúdo Teológico</h1>
+<p class="subtitle">Sistema Israel Ramires — leitura como meio</p>
+
+<div class="step-nav" id="stepNav">
+  <div class="step-dot active" onclick="goTo(0)"></div>
+  <div class="step-dot" onclick="goTo(1)"></div>
+  <div class="step-dot" onclick="goTo(2)"></div>
+  <div class="step-dot" onclick="goTo(3)"></div>
+  <div class="step-dot" onclick="goTo(4)"></div>
+</div>
+
+<!-- SCREEN 0: Visão geral -->
+<div class="screen active" id="s0">
+  <div class="card">
+    <div class="card-label">O modelo</div>
+    <h2>Leitura como combustível, não como tema</h2>
+    <p>Você não faz vídeos sobre livros. Você faz vídeos sobre teologia, vida cristã e espiritualidade — e os livros são o que torna o seu conteúdo mais profundo que o de qualquer um que fala sem ter lido.</p>
+  </div>
+
+  <p class="section-title">O fluxo completo</p>
+
+  <div class="card">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <strong>Leitura ou audiolivro</strong>
+        <span>No carro ou na espera entre viagens</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <strong>Captura por voz</strong>
+        <span>Wispr no WhatsApp → copia e cola no Claude</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <strong>Processamento</strong>
+        <span>Claude transforma em roteiro de vídeo</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <strong>Gravação</strong>
+        <span>Talking head, 10–15 min, você na câmera</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <strong>Arquivo no Cérebro</strong>
+        <span>Salva no Obsidian para reusar em sermões e cursos</span>
+      </div>
+    </div>
+  </div>
+
+  <button class="nav-btn primary" onclick="goTo(1)">Ver como capturar →</button>
+</div>
+
+<!-- SCREEN 1: Captura -->
+<div class="screen" id="s1">
+  <div class="alert">
+    O segredo é capturar sua <strong>reação</strong>, não o conteúdo do livro. O que aquilo te fez pensar? Onde isso se conecta com a Bíblia, com a sua congregação, com a vida real?
+  </div>
+
+  <div class="card">
+    <div class="card-label">Gatilho para gravar</div>
+    <h2>Quando algo te impactar</h2>
+    <p>Pare. Abre o WhatsApp, segura o microfone e fala por 1 a 2 minutos. Não precisa ser bonito — é captura bruta.</p>
+  </div>
+
+  <p class="section-title">O que falar no áudio</p>
+
+  <div class="card">
+    <div class="flow-step">
+      <div class="flow-num">→</div>
+      <div class="flow-content">
+        <strong>O que me impactou</strong>
+        <span>Uma frase, uma ideia, uma imagem do livro</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">→</div>
+      <div class="flow-content">
+        <strong>Por que isso importa</strong>
+        <span>Conexão com a Bíblia, com o evangelho, com a vida cristã</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">→</div>
+      <div class="flow-content">
+        <strong>Para quem isso fala</strong>
+        <span>Sua congregação, o cristão médio, o líder, o novo crente</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">→</div>
+      <div class="flow-content">
+        <strong>Qual pergunta isso responde</strong>
+        <span>A tensão ou problema que o vídeo vai resolver</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn secondary" onclick="goTo(0)">← Voltar</button>
+    <button class="nav-btn primary" style="flex:1" onclick="goTo(2)">Ver prompt de processamento →</button>
+  </div>
+</div>
+
+<!-- SCREEN 2: Prompt principal -->
+<div class="screen" id="s2">
+  <div class="card">
+    <div class="card-label">Prompt fixo — cole antes da sua transcrição</div>
+    <h2>Transformador de captura em roteiro</h2>
+    <p style="margin-bottom:14px">Cole este prompt no Claude, depois cole sua transcrição logo abaixo.</p>
+
+    <div class="prompt-box" id="promptMain">Você é um assistente de produção de conteúdo teológico. Vou te mandar uma captura bruta de voz — uma reação minha a algo que li ou ouvi num livro teológico.
+
+Seu trabalho é transformar isso num roteiro de vídeo talking head de 10 a 15 minutos.
+
+Regras do roteiro:
+— O livro não é o tema, é o combustível. Nunca mencione o título ou autor como assunto central
+— Comece com uma pergunta ou tensão real que o cristão médio sente
+— Desenvolva com profundidade teológica, mas em linguagem acessível
+— Use uma ilustração ou exemplo concreto no meio
+— Termine com aplicação prática e chamada à reflexão
+— Tom: denso, direto, pastoral — sem enrolação
+
+Formato de saída:
+GANCHO (primeiros 30 segundos)
+DESENVOLVIMENTO (corpo do vídeo)
+APLICAÇÃO E FECHAMENTO
+
+Minha captura bruta:</div>
+    <button class="copy-btn" onclick="copyText('promptMain', this)">Copiar prompt</button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn secondary" onclick="goTo(1)">← Voltar</button>
+    <button class="nav-btn primary" style="flex:1" onclick="goTo(3)">Ver variações →</button>
+  </div>
+</div>
+
+<!-- SCREEN 3: Variações -->
+<div class="screen" id="s3">
+  <p class="section-title">Variações de formato</p>
+
+  <div class="card">
+    <div class="card-label">Variação 1 — Confronto</div>
+    <h2>Quando o livro contradiz algo comum na igreja</h2>
+    <div class="prompt-box" id="promptV1">Mesmas regras do prompt principal, mas estruture o vídeo como um confronto gentil: comece com o que a maioria pensa ou pratica, desenvolva por que isso é insuficiente à luz da teologia bíblica, e termine com o que deveria ser diferente. Tom profético, não arrogante.
+
+Minha captura bruta:</div>
+    <button class="copy-btn" onclick="copyText('promptV1', this)">Copiar</button>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Variação 2 — Aprofundamento</div>
+    <h2>Quando o livro expande algo que a igreja já crê</h2>
+    <div class="prompt-box" id="promptV2">Mesmas regras do prompt principal, mas estruture como aprofundamento: comece com a crença já familiar, mostre que ela tem uma dimensão que a maioria não alcançou, e convide o espectador a entrar mais fundo. Tom doxológico e admirado.
+
+Minha captura bruta:</div>
+    <button class="copy-btn" onclick="copyText('promptV2', this)">Copiar</button>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Variação 3 — Pastoral</div>
+    <h2>Quando o livro fala a uma dor ou dilema real</h2>
+    <div class="prompt-box" id="promptV3">Mesmas regras do prompt principal, mas estruture como resposta pastoral: comece nomeando a dor ou dilema com precisão, desenvolva a resposta teológica com compaixão, e termine com consolação fundamentada na Escritura. Tom de pastor, não de professor.
+
+Minha captura bruta:</div>
+    <button class="copy-btn" onclick="copyText('promptV3', this)">Copiar</button>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn secondary" onclick="goTo(2)">← Voltar</button>
+    <button class="nav-btn primary" style="flex:1" onclick="goTo(4)">Ver cadência →</button>
+  </div>
+</div>
+
+<!-- SCREEN 4: Cadência -->
+<div class="screen" id="s4">
+  <div class="card">
+    <div class="card-label">Meta semanal mínima</div>
+    <h2>Uma captura por dia de trabalho</h2>
+    <p>Não é um vídeo por dia. É uma captura. O vídeo sai da captura, mas a captura é o hábito central.</p>
+  </div>
+
+  <p class="section-title">Ritmo semanal</p>
+
+  <div class="card">
+    <div class="flow-step">
+      <div class="flow-num">S</div>
+      <div class="flow-content">
+        <strong>Segunda a sexta</strong>
+        <span>1 captura por dia (áudio no Wispr → Claude)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">F</div>
+      <div class="flow-content">
+        <strong>Final de semana</strong>
+        <span>Escolhe a melhor captura da semana, grava o vídeo</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">+</div>
+      <div class="flow-content">
+        <strong>Capturas extras</strong>
+        <span>Viram rascunhos para sermões, cursos ou posts</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert">
+    Você não precisa ler um livro por semana. Uma boa captura de um único parágrafo já sustenta um vídeo denso de 15 minutos.
+  </div>
+
+  <div class="card">
+    <div class="card-label">Destinos do conteúdo gerado</div>
+    <div class="tag-row">
+      <span class="tag">Vídeo YouTube</span>
+      <span class="tag">Sermão AD</span>
+      <span class="tag">Aula curso teologia</span>
+      <span class="tag">Devocional WhatsApp</span>
+      <span class="tag">Obsidian / Cérebro</span>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="nav-btn secondary" onclick="goTo(3)">← Voltar</button>
+    <button class="nav-btn primary" style="flex:1" onclick="goTo(0)">Recomeçar ↺</button>
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">Copiado ✓</div>
+
+<script>
+  let current = 0;
+
+  function goTo(n) {
+    document.getElementById('s' + current).classList.remove('active');
+    document.querySelectorAll('.step-dot')[current].classList.remove('active');
+    if (current < n) document.querySelectorAll('.step-dot')[current].classList.add('done');
+    current = n;
+    document.getElementById('s' + current).classList.add('active');
+    document.querySelectorAll('.step-dot')[current].classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function copyText(id, btn) {
+    const text = document.getElementById(id).innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+  }
+</script>
+</body>
+</html>
