@@ -14,21 +14,31 @@ exports.handler = async (event) => {
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 1000,
+        model: 'claude-3-5-sonnet-20241022',
+        max_tokens: 2048,
         messages: [{ role: 'user', content: prompt }]
       })
     });
 
     const data = await response.json();
+
+    console.log('STATUS:', response.status);
+    console.log('RESPOSTA:', JSON.stringify(data).slice(0, 500));
+
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
       body: JSON.stringify(data)
     };
+
   } catch (err) {
+    console.error('ERRO:', err.message);
     return {
       statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ error: err.message })
     };
   }
